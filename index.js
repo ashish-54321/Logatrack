@@ -9,6 +9,7 @@ app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('Hello, World!');
+  console.log("its working..");
 });
 
 app.listen(port, () => {
