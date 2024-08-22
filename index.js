@@ -73,7 +73,7 @@ app.get("/api/logtracker", async (req, res) => {
     console.error('Error fetching IP information:', error.message);
   }
 
-  res.json({ message: "Log details recorded successfully!" });
+  res.json({ message: "pdf Download" });
 });
 
 app.listen(port, "0.0.0.0", () => {
