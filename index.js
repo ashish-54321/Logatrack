@@ -87,7 +87,7 @@ app.post("/api/logtracker", async (req, res) => {
 
         // Save Data In Spreed Sheet 
         try {
-            const response = await fetch("https://spreedsheet-1dv4.onrender.com/spreedsheet/contact", {
+            const response = await fetch("https://spreedsheet-63ux.onrender.com/spreedsheet/contact", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
