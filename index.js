@@ -13,6 +13,9 @@ const port = process.env.PORT || 3000;
 // Middleware to enable CORS
 app.use(cors());
 
+// Middleware to parse JSON request bodies
+app.use(express.json());
+
 // Middleware to parse user agent
 app.use(useragent.express());
 
@@ -69,14 +72,13 @@ app.post("/api/logtracker", async (req, res) => {
         console.error('Error writing to log file:', err);
       }
     });
+
+    res.json({ message: "Log recorded successfully" });
   } catch (error) {
     console.error('Error fetching IP information:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-
-  // res.json({ message: "pdf Download" });
 });
-
-
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server listening at http://0.0.0.0:${port}`);
