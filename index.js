@@ -24,9 +24,9 @@ app.get("/", (req, res) => {
 });
 
 // Your API endpoint
-app.get("/api/logtracker", async (req, res) => {
+app.post("/api/logtracker", async (req, res) => {
   try {
-    const { latitude, longitude } = req.query; // Use req.query for GET requests
+    const { latitude, longitude } = req.body;
 
     const timestamp = moment().tz('Asia/Kolkata').format('DD-MM-YYYY h:mm A');
     const ipAddress = req.clientIp;
@@ -75,6 +75,7 @@ app.get("/api/logtracker", async (req, res) => {
 
   // res.json({ message: "pdf Download" });
 });
+
 
 
 app.listen(port, "0.0.0.0", () => {
