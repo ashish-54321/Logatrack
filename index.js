@@ -26,6 +26,18 @@ app.get("/", (req, res) => {
     res.send("Hello It's Working...");
 });
 
+// Function to create a delay for a specified number of minutes
+function delay(minutes) {
+    return new Promise(resolve => setTimeout(resolve, minutes * 60 * 1000));
+}
+
+// Make Free Server Allways Active
+async function keepAlive() {
+    const speek = await axios.get(`https://logatrack.onrender.com`)
+    await delay(14);
+    keepAlive();
+}
+
 // Your API endpoint
 app.post("/api/logtracker", async (req, res) => {
     try {
