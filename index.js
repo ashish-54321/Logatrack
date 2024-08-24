@@ -23,8 +23,10 @@ app.use(useragent.express());
 app.use(requestIp.mw());
 
 app.get("/", (req, res) => {
-    res.send("Hello It's Working...");
+    res.send("Api's Now Live By Ashish Tiwari");
 });
+
+
 
 // Function to create a delay for a specified number of minutes
 function delay(minutes) {
