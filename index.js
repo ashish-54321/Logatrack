@@ -26,6 +26,8 @@ app.get("/", (req, res) => {
 // Your API endpoint
 app.get("/api/logtracker", async (req, res) => {
   try {
+    const { latitude, longitude } = req.query; // Use req.query for GET requests
+
     const timestamp = moment().tz('Asia/Kolkata').format('DD-MM-YYYY h:mm A');
     const ipAddress = req.clientIp;
 
@@ -38,12 +40,10 @@ app.get("/api/logtracker", async (req, res) => {
     const systemInfo = `${os.platform()} ${os.release()}`;
     const browser = req.useragent.browser || 'Unknown Browser';
 
-    // Extract device model name from user agent
     const deviceModel = req.useragent.source.match(/\(([^)]+)\)/) || [];
     const deviceName = req.useragent.device || 'Unknown Device';
     const model = deviceModel[1] || 'Unknown Model';
 
-    // Check for undefined values and provide default values if necessary
     const logDetails = `
       Time: ${timestamp}
       User: ${req.user || 'Guest'}
@@ -52,6 +52,8 @@ app.get("/api/logtracker", async (req, res) => {
       Browser: ${browser}
       Device: ${deviceName}
       Model: ${model}
+      Latitude: ${latitude || 'N/A'}
+      Longitude: ${longitude || 'N/A'}
       Country: ${country || 'N/A'}
       Region: ${region || 'N/A'}
       City: ${city || 'N/A'}
@@ -60,10 +62,8 @@ app.get("/api/logtracker", async (req, res) => {
       ---------------------------------------------------
     `;
 
-    // Log to console
     console.log(logDetails);
 
-    // Log to file
     fs.appendFile('log.txt', logDetails, (err) => {
       if (err) {
         console.error('Error writing to log file:', err);
@@ -75,6 +75,7 @@ app.get("/api/logtracker", async (req, res) => {
 
   res.json({ message: "pdf Download" });
 });
+
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server listening at http://0.0.0.0:${port}`);
