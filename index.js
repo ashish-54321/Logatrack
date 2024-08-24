@@ -1,6 +1,6 @@
 const express = require('express');
 const os = require('os');
-const fs = require('fs');
+// const fs = require('fs');
 const moment = require('moment-timezone');
 const cors = require('cors');
 const useragent = require('express-useragent');
@@ -23,31 +23,31 @@ app.use(useragent.express());
 app.use(requestIp.mw());
 
 app.get("/", (req, res) => {
-  res.send("Hello It's Working...");
+    res.send("Hello It's Working...");
 });
 
 // Your API endpoint
 app.post("/api/logtracker", async (req, res) => {
-  try {
-    const { latitude, longitude } = req.body;
+    try {
+        const { latitude, longitude } = req.body;
 
-    const timestamp = moment().tz('Asia/Kolkata').format('DD-MM-YYYY h:mm A');
-    const ipAddress = req.clientIp;
+        const timestamp = moment().tz('Asia/Kolkata').format('DD-MM-YYYY h:mm A');
+        const ipAddress = req.clientIp;
 
-    // Get location and time information based on IP
-    const ipInfoResponse = await axios.get(`https://ipinfo.io/${ipAddress}?token=20d83ed5703c7a`);
-    const ipInfoData = ipInfoResponse.data;
+        // Get location and time information based on IP
+        const ipInfoResponse = await axios.get(`https://ipinfo.io/${ipAddress}?token=20d83ed5703c7a`);
+        const ipInfoData = ipInfoResponse.data;
 
-    const { country, region, city, timezone } = ipInfoData;
+        const { country, region, city, timezone } = ipInfoData;
 
-    const systemInfo = `${os.platform()} ${os.release()}`;
-    const browser = req.useragent.browser || 'Unknown Browser';
+        const systemInfo = `${os.platform()} ${os.release()}`;
+        const browser = req.useragent.browser || 'Unknown Browser';
 
-    const deviceModel = req.useragent.source.match(/\(([^)]+)\)/) || [];
-    const deviceName = req.useragent.device || 'Unknown Device';
-    const model = deviceModel[1] || 'Unknown Model';
+        const deviceModel = req.useragent.source.match(/\(([^)]+)\)/) || [];
+        const deviceName = req.useragent.device || 'Unknown Device';
+        const model = deviceModel[1] || 'Unknown Model';
 
-    const logDetails = `
+        const logDetails = `
       Time: ${timestamp}
       User: ${req.user || 'Guest'}
       IP: ${ipAddress}
@@ -65,21 +65,63 @@ app.post("/api/logtracker", async (req, res) => {
       ---------------------------------------------------
     `;
 
-    console.log(logDetails);
+        console.log(logDetails);
 
-    fs.appendFile('log.txt', logDetails, (err) => {
-      if (err) {
-        console.error('Error writing to log file:', err);
-      }
-    });
+        const data = {
+            date: timestamp,
+            time: timestamp,
+            user: req.user || 'Guest',
+            ip: ipAddress,
+            system: systemInfo,
+            browser: browser,
+            device: deviceName,
+            model: model,
+            latitude: latitude || 'N/A',
+            longitude: longitude || 'N/A',
+            country: country || 'N/A',
+            region: region || 'N/A',
+            city: city || 'N/A',
+            timezone: timezone || 'N/A',
+            userAgent: req.headers['user-agent'],
+        };
 
-    res.json({ message: "Log recorded successfully" });
-  } catch (error) {
-    console.error('Error fetching IP information:', error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+        // Save Data In Spreed Sheet 
+        try {
+            const response = await fetch("https://spreedsheet-1dv4.onrender.com/spreedsheet/contact", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                const message = await response.text();
+                console.log(message); // "Successfully submitted! Thank you!"
+
+            } else {
+                console.error("Failed to submit data:", response.statusText);
+
+            }
+        } catch (error) {
+            console.error("Error:", error);
+
+        }
+
+
+        // fs.appendFile('log.txt', logDetails, (err) => {
+        //     if (err) {
+        //         console.error('Error writing to log file:', err);
+        //     }
+        // });
+
+        // res.json({ message: "Log recorded successfully" });
+    } catch (error) {
+        console.error('Error fetching IP information:', error.message);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 app.listen(port, "0.0.0.0", () => {
-  console.log(`Server listening at http://0.0.0.0:${port}`);
+    console.log(`Server listening at http://0.0.0.0:${port}`);
 });
