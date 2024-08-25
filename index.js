@@ -36,7 +36,7 @@ function delay(minutes) {
 // Make Free Server Allways Active
 async function keepAlive() {
     const speek = await axios.get(`https://logatrack.onrender.com`)
-    await delay(14);
+    await delay(6);
     keepAlive();
 }
 
